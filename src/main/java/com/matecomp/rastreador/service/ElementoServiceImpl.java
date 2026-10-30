@@ -1,16 +1,20 @@
 package com.matecomp.rastreador.service;
 
 import com.matecomp.rastreador.model.Elemento;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
 @Service//para que spring nos instancie esta clase
+@RequiredArgsConstructor
 public class ElementoServiceImpl implements ElementoService {
 
-    String url1 = "http://localhost:8000";
-    String url2 = "http://localhost:9000";
+    String url1 = "http://servicios-productos1-with-bd";
+    String url2 = "http://servicios-productos2-without-bd";
+
+    private final WebClient.Builder  builder;
 
 
     @Override
@@ -26,10 +30,10 @@ public class ElementoServiceImpl implements ElementoService {
 
     private Flux<Elemento> catalogo(String url, String tienda) {
 
-        WebClient client = WebClient.create(url);
+        WebClient client = builder.build();
         return client
                 .get()
-                .uri("/productos")
+                .uri(url + "/productos")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToFlux(Elemento.class)
